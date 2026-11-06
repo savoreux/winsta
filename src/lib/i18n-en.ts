@@ -1,6 +1,8 @@
 // Terjemahan Inggris. Kunci = teks Indonesia persis seperti di kode.
 // Cek yang belum ada: node scripts/check-i18n.mjs
 export const EN: Record<string, string> = {
+  "−1 versi": "−1 version",
+  "−{n} versi": "−{n} versions",
   " beserta arsipnya": " along with its archive",
   " · pilih drive lain": " · choose another drive",
   " · versi dikunci": " · version pinned",

@@ -388,7 +388,7 @@ function RollbackBody({ app }: { app: App }) {
                     </span>
                     <div className="min-w-0 flex-1">
                       <p className="flex items-center gap-2 font-semibold text-ink tabular-nums">
-                        {o.version} <span className="text-xs font-normal text-mute">−{i + 1} {t("versi")}</span>
+                        {o.version} <span className="text-xs font-normal text-mute">{i === 0 ? t("−1 versi") : t("−{n} versi", { n: i + 1 })}</span>
                       </p>
                       {o.source === "archive" ? (
                         <p className="flex items-center gap-1.5 truncate font-mono text-xs text-mute">
