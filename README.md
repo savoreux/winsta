@@ -166,6 +166,40 @@ rustc --edition 2021 --test src/cleanup.rs -o cleanup_test && ./cleanup_test # p
 
 ---
 
+## Code signing policy
+
+Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by
+[SignPath Foundation](https://signpath.org).
+
+- **Signed artifacts:** the Winsta Windows installer (`Winsta_<version>_x64_en-US.msi`) and the
+  `winsta.exe` it contains, published on the [Releases](https://github.com/savoreux/winsta/releases) page.
+- **Build:** every release is built from this public repository by the GitHub Actions workflow
+  [`.github/workflows/release.yml`](.github/workflows/release.yml). Binaries built on personal machines
+  are never signed.
+- **Team roles:**
+  - Committers and reviewers: [savoreux](https://github.com/savoreux)
+  - Approvers: [savoreux](https://github.com/savoreux)
+- **Approval:** every signing request is approved manually by an approver.
+- **Account security:** all team members use multi-factor authentication on GitHub and SignPath.
+
+## Privacy policy
+
+This program will not transfer any information to other networked systems unless specifically requested
+by the user or the person installing or operating it.
+
+Winsta only connects to the network when you use it:
+- **winget** (Microsoft) is run to search, install, update, and uninstall apps.
+- **api.github.com** is called to search repositories and read releases when you search or install from
+  GitHub. An optional GitHub token, if you add one in Settings, is stored only on your PC.
+- **github.com** release files are downloaded when you install or update a GitHub app.
+
+Winsta has no analytics, telemetry, or account, and does not collect personal data.
+
+## Uninstall
+
+Remove Winsta from **Windows Settings → Apps → Installed apps → Winsta → Uninstall**. Apps you installed
+with Winsta stay installed.
+
 ## Lisensi
 
 © 2026 Savoreux
