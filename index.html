@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Winsta</title>
+    <meta name="color-scheme" content="light dark" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" />
+    <script>
+      // Terapkan tema sebelum halaman digambar agar tidak berkedip putih.
+      (function () {
+        var pref = "system";
+        try { pref = localStorage.getItem("winsta.theme") || "system"; } catch (e) {}
+        var host = document.documentElement.getAttribute("data-theme");
+        var sys = host === "dark" || host === "light" ? host === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var dark = pref === "dark" || (pref === "system" && sys);
+        document.documentElement.classList.toggle("dark", dark);
+        document.documentElement.style.colorScheme = dark ? "dark" : "light";
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
