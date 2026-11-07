@@ -1,0 +1,23 @@
+name: 💡 Feature request / Usulan fitur
+description: An idea to make Winsta better. / Ide untuk membuat Winsta lebih baik.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What do you want to do? / Apa yang ingin kamu lakukan?
+      description: Describe the situation, not only the solution. / Ceritakan situasinya, bukan hanya solusinya.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea / Idemu
+      description: How should it work in Winsta? / Bagaimana seharusnya fitur ini bekerja di Winsta?
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else? / Hal lain?
+      description: Screenshots, similar apps that do this, etc.

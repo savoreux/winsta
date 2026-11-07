@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 📖 Winsta website & FAQ
+    url: https://savoreux.github.io/winsta/#faq
+    about: Common questions, like apps not showing up or the SmartScreen warning.

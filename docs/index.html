@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Winsta — Install, update & roll back Windows apps</title>
+<meta name="description" content="Winsta is a free, open-source Windows app manager built on winget. Choose where apps are installed, update in one click, and roll back up to 5 versions." />
+<meta property="og:title" content="Winsta — Install, update & roll back Windows apps" />
+<meta property="og:description" content="Free, open-source app manager for Windows. Built on winget and GitHub Releases." />
+<meta property="og:image" content="https://savoreux.github.io/winsta/assets/screenshot-discover.png" />
+<meta property="og:url" content="https://savoreux.github.io/winsta/" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" type="image/png" href="assets/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" />
+<script>
+  // Tema dipasang sebelum halaman digambar agar tidak berkedip.
+  (function () {
+    try {
+      var t = localStorage.getItem("winsta-theme");
+      if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  })();
+</script>
+<style>
+  :root {
+    --bg: oklch(97.6% .004 250);
+    --surface: oklch(99.2% .002 250);
+    --surface-2: oklch(95.4% .006 250);
+    --line: oklch(88.5% .009 250);
+    --ink: oklch(20% .014 250);
+    --ink-2: oklch(38% .014 250);
+    --mute: oklch(50% .014 250);
+    --primary: oklch(22% .016 250);
+    --on-primary: oklch(98.5% .003 250);
+    --accent: oklch(52% .15 242);
+    --accent-soft: oklch(52% .15 242 / .1);
+    --orange: #f97316;
+    --shadow: 0 1px 2px oklch(35% .05 250 / .08), 0 12px 40px -12px oklch(35% .05 250 / .22);
+    --stripe-a: oklch(70% .14 235 / .22);
+    --stripe-b: oklch(48% .16 250 / .0);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: oklch(14.5% .006 250);
+      --surface: oklch(17.5% .007 250);
+      --surface-2: oklch(21% .008 250);
+      --line: oklch(29% .009 250);
+      --ink: oklch(96.5% .004 250);
+      --ink-2: oklch(80% .008 250);
+      --mute: oklch(66% .01 250);
+      --primary: oklch(96.5% .004 250);
+      --on-primary: oklch(18% .01 250);
+      --accent: oklch(78% .12 232);
+      --accent-soft: oklch(78% .12 232 / .12);
+      --shadow: 0 1px 2px #0006, 0 20px 50px -16px #000a;
+      --stripe-a: oklch(70% .14 235 / .14);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: oklch(14.5% .006 250);
+    --surface: oklch(17.5% .007 250);
+    --surface-2: oklch(21% .008 250);
+    --line: oklch(29% .009 250);
+    --ink: oklch(96.5% .004 250);
+    --ink-2: oklch(80% .008 250);
+    --mute: oklch(66% .01 250);
+    --primary: oklch(96.5% .004 250);
+    --on-primary: oklch(18% .01 250);
+    --accent: oklch(78% .12 232);
+    --accent-soft: oklch(78% .12 232 / .12);
+    --shadow: 0 1px 2px #0006, 0 20px 50px -16px #000a;
+    --stripe-a: oklch(70% .14 235 / .14);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.6 Geist, "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { max-width: 100%; height: auto; display: block; }
+  a { color: inherit; }
+  code, kbd, .mono { font-family: "Geist Mono", "Cascadia Mono", Consolas, monospace; }
+  h1, h2, h3 { text-wrap: balance; letter-spacing: -.02em; line-height: 1.15; margin: 0; }
+  p { margin: 0; }
+
+  .wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding-left: max(20px, env(safe-area-inset-left, 0px));
+    padding-right: max(20px, env(safe-area-inset-right, 0px));
+  }
+
+  /* Navigasi */
+  .nav {
+    position: sticky; top: 0; z-index: 10;
+    background: color-mix(in oklab, var(--bg) 82%, transparent);
+    backdrop-filter: saturate(1.4) blur(12px);
+    -webkit-backdrop-filter: saturate(1.4) blur(12px);
+    border-bottom: 1px solid color-mix(in oklab, var(--line) 70%, transparent);
+  }
+  .nav .wrap { display: flex; align-items: center; gap: 16px; height: 60px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; text-decoration: none; }
+  .brand img { width: 28px; height: 28px; }
+  .nav-links { display: flex; gap: 22px; margin-left: 20px; font-size: 14px; color: var(--ink-2); }
+  .nav-links a { text-decoration: none; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-tools { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+  .icon-btn {
+    height: 34px; min-width: 34px; padding: 0 10px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    border: 1px solid var(--line); border-radius: 9px;
+    background: var(--surface); color: var(--ink-2);
+    font: 500 13px/1 inherit; font-family: inherit; cursor: pointer; text-decoration: none;
+  }
+  .icon-btn:hover { color: var(--ink); background: var(--surface-2); }
+  .icon-btn svg { width: 16px; height: 16px; }
+
+  /* Tombol */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    height: 48px; padding: 0 22px; border-radius: 12px;
+    font-weight: 600; font-size: 15px; text-decoration: none; cursor: pointer; border: 1px solid transparent;
+    transition: transform .15s ease, background .15s ease;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn svg { width: 18px; height: 18px; }
+  .btn-primary { background: var(--primary); color: var(--on-primary); box-shadow: var(--shadow); }
+  .btn-primary:hover { background: color-mix(in oklab, var(--primary) 88%, var(--accent)); }
+  .btn-ghost { border-color: var(--line); background: var(--surface); color: var(--ink); }
+  .btn-ghost:hover { background: var(--surface-2); }
+  .btn-orange { background: var(--orange); color: #fff; }
+  .btn-orange:hover { background: #ea580c; }
+
+  /* Hero */
+  .hero { position: relative; overflow: hidden; padding: 72px 0 0; }
+  .hero::before {
+    content: ""; position: absolute; inset: 0 0 35% 0; pointer-events: none;
+    background: repeating-linear-gradient(115deg, var(--stripe-a) 0 2px, transparent 2px 22px);
+    mask-image: radial-gradient(ellipse 70% 80% at 50% 0%, #000 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 80% at 50% 0%, #000 30%, transparent 75%);
+  }
+  .hero .wrap { position: relative; text-align: center; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 5px 12px 5px 6px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--surface);
+    font-size: 13px; color: var(--ink-2); text-decoration: none;
+  }
+  .pill b { background: var(--accent-soft); color: var(--accent); padding: 2px 8px; border-radius: 999px; font-weight: 600; font-size: 12px; }
+  .hero h1 { font-size: clamp(36px, 6vw, 64px); font-weight: 700; margin: 22px auto 0; max-width: 16ch; }
+  .hero h1 span { color: var(--accent); white-space: nowrap; }
+  .hero .lead { margin: 18px auto 0; max-width: 60ch; font-size: clamp(16px, 2vw, 19px); color: var(--ink-2); }
+  .cta { margin-top: 32px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+  .meta { margin-top: 14px; font-size: 13px; color: var(--mute); }
+  .cmd {
+    margin: 22px auto 0; display: inline-flex; align-items: center; gap: 4px;
+    max-width: 100%; padding: 6px 6px 6px 16px; border-radius: 12px;
+    border: 1px solid var(--line); background: var(--surface); font-size: 14px;
+  }
+  .cmd code { white-space: nowrap; overflow-x: auto; color: var(--ink-2); }
+  .cmd code::before { content: "> "; color: var(--mute); }
+  .cmd .soon { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--mute); padding: 0 8px; }
+
+  .shot {
+    margin: 56px auto 0; max-width: 1040px;
+    border-radius: 14px; overflow: hidden;
+    border: 1px solid var(--line); background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  /* Bagian */
+  section { padding: 96px 0 0; }
+  .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  .section-head { max-width: 640px; }
+  .section-head h2 { margin-top: 10px; font-size: clamp(28px, 4vw, 40px); }
+  .section-head p { margin-top: 12px; color: var(--ink-2); font-size: 17px; }
+
+  .grid { display: grid; gap: 16px; margin-top: 40px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    padding: 22px; border-radius: 14px;
+    background: var(--surface); border: 1px solid var(--line);
+  }
+  .card .ico {
+    width: 38px; height: 38px; border-radius: 10px;
+    display: grid; place-items: center;
+    background: var(--accent-soft); color: var(--accent);
+  }
+  .card .ico svg { width: 20px; height: 20px; }
+  .card h3 { margin-top: 14px; font-size: 17px; font-weight: 600; }
+  .card p { margin-top: 6px; font-size: 15px; color: var(--ink-2); }
+
+  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 40px; }
+  .duo figure { margin: 0; }
+  .duo img { border-radius: 12px; border: 1px solid var(--line); box-shadow: var(--shadow); }
+  .duo figcaption { margin-top: 10px; font-size: 14px; color: var(--mute); text-align: center; }
+  @media (max-width: 760px) { .duo { grid-template-columns: 1fr; } }
+
+  .steps { counter-reset: s; display: grid; gap: 16px; margin-top: 40px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .step { position: relative; padding: 22px 22px 22px 70px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
+  .step::before {
+    counter-increment: s; content: counter(s);
+    position: absolute; left: 22px; top: 20px;
+    width: 32px; height: 32px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--primary); color: var(--on-primary); font-weight: 600; font-size: 14px;
+  }
+  .step h3 { font-size: 16px; font-weight: 600; }
+  .step p { margin-top: 4px; font-size: 15px; color: var(--ink-2); }
+  .note {
+    margin-top: 16px; padding: 14px 18px; border-radius: 12px;
+    background: var(--accent-soft); color: var(--ink-2); font-size: 15px;
+  }
+  .note b { color: var(--ink); }
+  .req { margin-top: 16px; font-size: 14px; color: var(--mute); }
+
+  .faq { margin-top: 32px; border-top: 1px solid var(--line); max-width: 820px; }
+  .faq details { border-bottom: 1px solid var(--line); }
+  .faq summary {
+    list-style: none; cursor: pointer; padding: 18px 36px 18px 0; position: relative;
+    font-weight: 600; font-size: 16px;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after {
+    content: "+"; position: absolute; right: 4px; top: 14px;
+    font-size: 22px; font-weight: 400; color: var(--mute); transition: transform .2s;
+  }
+  .faq details[open] summary::after { transform: rotate(45deg); }
+  .faq details p { padding: 0 0 20px; color: var(--ink-2); max-width: 70ch; }
+
+  .stats {
+    margin: 40px auto 0; max-width: 1040px;
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    border: 1px solid var(--line); border-radius: 14px; background: var(--surface); overflow: hidden;
+  }
+  .stat { padding: 20px 22px; text-align: left; }
+  .stat + .stat { border-left: 1px solid var(--line); }
+  .stat dt { font-size: 13px; color: var(--mute); display: flex; align-items: center; gap: 6px; }
+  .stat dt svg { width: 15px; height: 15px; }
+  .stat dd { margin: 4px 0 0; font-size: 28px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .stat dd.loading { color: var(--mute); }
+  @media (max-width: 760px) {
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .stat:nth-child(3) { border-left: 0; }
+    .stat:nth-child(n+3) { border-top: 1px solid var(--line); }
+    .stat { padding: 16px; }
+    .stat dd { font-size: 22px; white-space: nowrap; }
+  }
+
+  .fb-grid { display: grid; gap: 16px; margin-top: 32px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 860px) { .fb-grid { grid-template-columns: 1fr; } }
+  .fb {
+    display: flex; flex-direction: column; gap: 6px; padding: 22px; border-radius: 14px;
+    background: var(--surface); border: 1px solid var(--line); text-decoration: none;
+    transition: border-color .15s ease, transform .15s ease;
+  }
+  .fb:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .fb .ico { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); margin-bottom: 8px; }
+  .fb .ico svg { width: 20px; height: 20px; }
+  .fb h3 { font-size: 17px; font-weight: 600; }
+  .fb p { font-size: 15px; color: var(--ink-2); }
+  .fb span.go { margin-top: auto; padding-top: 10px; font-size: 14px; font-weight: 600; color: var(--accent); }
+
+  .support {
+    margin-top: 96px; padding: 40px; border-radius: 20px;
+    background: var(--surface); border: 1px solid var(--line);
+    display: flex; flex-wrap: wrap; align-items: center; gap: 24px;
+  }
+  .support div { flex: 1 1 320px; min-width: 0; }
+  .support h2 { font-size: clamp(24px, 3vw, 32px); }
+  .support p { margin-top: 8px; color: var(--ink-2); }
+  .support .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+  footer { margin-top: 64px; border-top: 1px solid var(--line); padding: 28px 0 40px; font-size: 14px; color: var(--mute); }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; }
+  footer nav { display: flex; flex-wrap: wrap; gap: 18px; margin-left: auto; }
+  footer a { text-decoration: none; }
+  footer a:hover { color: var(--ink); }
+
+  @media (max-width: 760px) {
+    .nav-links { display: none; }
+    .hero { padding-top: 48px; }
+    section { padding-top: 72px; }
+    .support { padding: 26px; }
+    .lang-label { display: none; }
+  }
+  @media (max-width: 480px) {
+    .cmd { flex-wrap: wrap; justify-content: center; padding: 8px 12px; }
+    .cmd code { font-size: 13px; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="assets/logo.png" alt="" />Winsta</a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="#features" data-i18n="nav.features">Features</a>
+      <a href="#install" data-i18n="nav.install">Install</a>
+      <a href="#faq" data-i18n="nav.faq">FAQ</a>
+      <a href="#feedback" data-i18n="nav.feedback">Feedback</a>
+    </nav>
+    <div class="nav-tools">
+      <button class="icon-btn" id="lang" type="button" aria-label="Language">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span id="lang-text">ID</span>
+      </button>
+      <button class="icon-btn" id="theme" type="button" aria-label="Toggle theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>
+      </button>
+      <a class="icon-btn" href="https://github.com/savoreux/winsta" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>
+        <span class="lang-label">GitHub</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div class="wrap">
+      <a class="pill" href="https://github.com/savoreux/winsta/releases/latest">
+        <b data-i18n="hero.badge">New</b><span id="pill-text" data-i18n="hero.pill">Winsta is now available for Windows</span>
+      </a>
+      <h1 data-i18n-html="hero.title">Install, update &amp; <span>roll back</span> Windows apps</h1>
+      <p class="lead" data-i18n="hero.lead">A free, open-source app manager built on winget. Choose where every app is installed, update everything in one click, and go back up to 5 versions when an update breaks something.</p>
+      <div class="cta">
+        <a class="btn btn-primary" id="download" href="https://github.com/savoreux/winsta/releases/latest">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          <span data-i18n="hero.download">Download for Windows</span>
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/savoreux/winsta">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>
+          <span data-i18n="hero.source">View source</span>
+        </a>
+      </div>
+      <p class="meta" id="meta" data-i18n="hero.meta">Windows 10 &amp; 11 · 64-bit · Free &amp; open source (GPL-3.0)</p>
+      <div class="cmd">
+        <code>winget install Savoreux.Winsta</code>
+        <span class="soon" data-i18n="hero.soon">Coming soon</span>
+      </div>
+      <div class="shot">
+        <img src="assets/screenshot-discover.png" width="2560" height="1520" alt="Winsta's Discover page with search, update banner, and popular apps" />
+      </div>
+      <dl class="stats" aria-live="polite">
+        <div class="stat">
+          <dt><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg><span data-i18n="st.downloads">Downloads</span></dt>
+          <dd id="st-downloads" class="loading">—</dd>
+        </div>
+        <div class="stat">
+          <dt><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/></svg><span data-i18n="st.stars">GitHub stars</span></dt>
+          <dd id="st-stars" class="loading">—</dd>
+        </div>
+        <div class="stat">
+          <dt><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8l-8-5-8 5v8l8 5 4-2.5"/><path d="M4 8l8 5 8-5M12 13v8"/></svg><span data-i18n="st.version">Latest version</span></dt>
+          <dd id="st-version" class="loading">—</dd>
+        </div>
+        <div class="stat">
+          <dt><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span data-i18n="st.updated">Last release</span></dt>
+          <dd id="st-date" class="loading">—</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+
+  <section id="features">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow" data-i18n="feat.eyebrow">Features</p>
+        <h2 data-i18n="feat.title">Everything winget can do, without typing commands</h2>
+        <p data-i18n="feat.lead">Winsta runs the official Windows Package Manager for you and adds what the command line doesn't: install folders, version history, and a clean uninstall.</p>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+          <h3 data-i18n="f1.t">Choose the install location</h3>
+          <p data-i18n="f1.d">Install to Winsta's default folder or any folder you pick, like drive D: to save space on your system SSD. Winsta tells you whether each installer type supports a custom folder and checks free disk space first.</p>
+        </article>
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></svg></div>
+          <h3 data-i18n="f2.t">Updates when you open it</h3>
+          <p data-i18n="f2.d">No background process or tray icon. New versions show as a number on the Update menu.</p>
+        </article>
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg></div>
+          <h3 data-i18n="f3.t">Roll back up to 5 versions</h3>
+          <p data-i18n="f3.d">Go back to an earlier version and pin it, so Update all leaves it alone.</p>
+        </article>
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.27 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg></div>
+          <h3 data-i18n="f4.t">Apps from GitHub too</h3>
+          <p data-i18n="f4.d">Search GitHub or paste a repo address. Winsta picks the right Windows file and checks its SHA-256 hash.</p>
+        </article>
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></svg></div>
+          <h3 data-i18n="f5.t">Clean uninstall</h3>
+          <p data-i18n="f5.d">After the uninstaller runs, Winsta finds leftover folders, AppData, and shortcuts, and deletes the ones you check.</p>
+        </article>
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></div>
+          <h3 data-i18n="f6.t">Every installer verified</h3>
+          <p data-i18n="f6.d">winget checks each installer's hash against its manifest. No telemetry, no account, no ads.</p>
+        </article>
+      </div>
+
+      <div class="duo">
+        <figure>
+          <img src="assets/screenshot-installed-dark.png" width="2560" height="1520" alt="Installed apps list in dark mode" />
+          <figcaption data-i18n="shot1">Every installed app, with its folder and update status</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/screenshot-rollback-dark.png" width="2560" height="1520" alt="Rollback dialog listing earlier versions" />
+          <figcaption data-i18n="shot2">Pick any of the last 5 versions to go back to</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow" data-i18n="inst.eyebrow">Install</p>
+        <h2 data-i18n="inst.title">Ready in under a minute</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <h3 data-i18n="s1.t">Download the installer</h3>
+          <p data-i18n-html="s1.d">Get the <code>.msi</code> file from the <a href="https://github.com/savoreux/winsta/releases/latest">latest release</a>.</p>
+        </div>
+        <div class="step">
+          <h3 data-i18n="s2.t">Pick a folder</h3>
+          <p data-i18n="s2.d">Run it. On the Destination Folder page, click Change… to install Winsta on any drive.</p>
+        </div>
+        <div class="step">
+          <h3 data-i18n="s3.t">Open Winsta</h3>
+          <p data-i18n="s3.d">Start it from the Start menu. It scans the apps already on your PC and checks for updates.</p>
+        </div>
+      </div>
+      <p class="note" data-i18n-html="inst.note"><b>Seeing "Windows protected your PC"?</b> Click <b>More info → Run anyway</b>. The installer isn't code-signed yet, so Windows doesn't recognize it. It's built in the open by GitHub Actions, and every release lists its SHA-256 checksum.</p>
+      <p class="req" data-i18n="inst.req">Requires Windows 10 (1809 or later) or Windows 11, 64-bit, with winget (App Installer). winget is built into Windows 11.</p>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">FAQ</p>
+        <h2 data-i18n="faq.title">Questions</h2>
+      </div>
+      <div class="faq">
+        <details>
+          <summary data-i18n="q1">Is Winsta free?</summary>
+          <p data-i18n="a1">Yes. Winsta is free and open source under the GPL-3.0 license. There are no ads, accounts, or paid tiers.</p>
+        </details>
+        <details>
+          <summary data-i18n="q2">Some of my installed apps don't show up. Why?</summary>
+          <p data-i18n="a2">Winsta reads the list from winget. On the Installed page, click Install module to add Microsoft's official Microsoft.WinGet.Client module, so names and IDs are read in full. Apps installed outside winget appear under "Other installed apps".</p>
+        </details>
+        <details>
+          <summary data-i18n="q3">Why does it say "Location not recorded by installer"?</summary>
+          <p data-i18n="a3">Some installers don't record their install folder in Windows. The app is still detected by its name and ID, and can still be updated or uninstalled.</p>
+        </details>
+        <details>
+          <summary data-i18n="q4">Can I really choose where any app is installed?</summary>
+          <p data-i18n="a4">It depends on the installer. MSI and portable apps respect the folder you pick; some .exe installers may ignore it, and MSIX packages are placed by Windows. Winsta shows this before you install and tells you afterwards if the installer used its own location.</p>
+        </details>
+        <details>
+          <summary data-i18n="q5">Does Winsta collect my data?</summary>
+          <p data-i18n="a5">No. Winsta has no telemetry or analytics. It only connects to winget sources and GitHub when you search, install, or update.</p>
+        </details>
+        <details>
+          <summary data-i18n="q6">How do I uninstall Winsta?</summary>
+          <p data-i18n="a6">Open Windows Settings → Apps → Installed apps → Winsta → Uninstall. Apps you installed with Winsta stay installed.</p>
+        </details>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="feedback">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow" data-i18n="fb.eyebrow">Feedback</p>
+        <h2 data-i18n="fb.title">Help make Winsta better</h2>
+        <p data-i18n="fb.lead">Found a bug or missing something? Every report is read. You'll need a free GitHub account to post.</p>
+      </div>
+      <div class="fb-grid">
+        <a class="fb" href="https://github.com/savoreux/winsta/issues/new?template=bug_report.yml">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6V4a4 4 0 0 1 8 0v2"/><rect x="6" y="6" width="12" height="14" rx="6"/><path d="M12 10v6M3 13h3M18 13h3M4 7l2 2M20 7l-2 2M4 19l2-2M20 19l-2-2"/></svg></span>
+          <h3 data-i18n="fb1.t">Report a bug</h3>
+          <p data-i18n="fb1.d">An app won't install, update, or uninstall, or Winsta shows an error. Tell us what you did and what happened.</p>
+          <span class="go" data-i18n="fb1.go">Report a bug →</span>
+        </a>
+        <a class="fb" href="https://github.com/savoreux/winsta/issues/new?template=feature_request.yml">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></span>
+          <h3 data-i18n="fb2.t">Suggest a feature</h3>
+          <p data-i18n="fb2.d">Something you wish Winsta could do? Share the idea and how you'd use it.</p>
+          <span class="go" data-i18n="fb2.go">Suggest an idea →</span>
+        </a>
+        <a class="fb" href="https://github.com/savoreux/winsta/issues">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12z"/></svg></span>
+          <h3 data-i18n="fb3.t">See existing feedback</h3>
+          <p data-i18n="fb3.d">Check whether someone already reported it, then add a 👍 or a comment so it gets fixed sooner.</p>
+          <span class="go" data-i18n="fb3.go">Browse issues →</span>
+        </a>
+      </div>
+
+      <div class="support">
+        <div>
+          <h2 data-i18n="sup.title">Winsta is free, and always will be</h2>
+          <p data-i18n="sup.lead">If it saves you time, you can support development on Saweria, or star the project on GitHub.</p>
+        </div>
+        <div class="actions">
+          <a class="btn btn-orange" href="https://saweria.co/davidhandy">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8.2 3.3 4.5 7 4.5c2 0 3.6 1.1 5 2.8 1.4-1.7 3-2.8 5-2.8 3.7 0 6 3.7 4.5 7.3C19.5 16.4 12 21 12 21z"/></svg>
+            Support on Saweria
+          </a>
+          <a class="btn btn-ghost" href="https://github.com/savoreux/winsta">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/></svg>
+            <span data-i18n="sup.star">Star on GitHub</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Savoreux · <a href="https://github.com/savoreux/winsta/blob/main/LICENSE">GPL-3.0</a></span>
+    <nav aria-label="Footer">
+      <a href="https://github.com/savoreux/winsta/releases" data-i18n="ft.releases">Releases</a>
+      <a href="https://github.com/savoreux/winsta/issues" data-i18n="ft.issues">Report a problem</a>
+      <a href="https://github.com/savoreux/winsta#-privacy--clean-uninstall" data-i18n="ft.privacy">Privacy</a>
+      <a href="https://github.com/savoreux" >@savoreux</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var ID = {
+    "nav.features": "Fitur", "nav.install": "Cara pasang", "nav.faq": "FAQ",
+    "hero.badge": "Baru", "hero.pill": "Winsta sudah tersedia untuk Windows",
+    "hero.title": "Install, update &amp; <span>rollback</span> aplikasi Windows",
+    "hero.lead": "Pengelola aplikasi gratis dan open-source di atas winget. Pilih folder install tiap aplikasi, update semuanya sekali klik, dan kembali hingga 5 versi sebelumnya saat update bermasalah.",
+    "hero.download": "Download untuk Windows", "hero.source": "Lihat kode",
+    "hero.meta": "Windows 10 & 11 · 64-bit · Gratis & open source (GPL-3.0)",
+    "hero.soon": "Segera hadir",
+    "feat.eyebrow": "Fitur", "feat.title": "Semua kemampuan winget, tanpa mengetik perintah",
+    "feat.lead": "Winsta menjalankan Windows Package Manager resmi untukmu, lalu menambahkan yang tidak ada di command line: pilihan folder install, riwayat versi, dan uninstall yang bersih.",
+    "f1.t": "Pilih lokasi install", "f1.d": "Pasang ke folder default Winsta atau folder pilihanmu, misalnya drive D: untuk menghemat SSD sistem. Winsta memberi tahu apakah jenis installer mendukung folder kustom, dan memeriksa ruang disk lebih dulu.",
+    "f2.t": "Cek update saat dibuka", "f2.d": "Tanpa proses latar belakang atau ikon system tray. Versi baru tampil sebagai angka di menu Update.",
+    "f3.t": "Rollback hingga 5 versi", "f3.d": "Kembali ke versi sebelumnya lalu kunci, supaya tidak ikut Update semua.",
+    "f4.t": "Aplikasi dari GitHub juga", "f4.d": "Cari di GitHub atau tempel alamat repo. Winsta memilih file Windows yang tepat dan memeriksa hash SHA-256-nya.",
+    "f5.t": "Uninstall bersih", "f5.d": "Setelah uninstaller selesai, Winsta mencari sisa folder, AppData, dan shortcut, lalu menghapus yang kamu centang.",
+    "f6.t": "Setiap installer diverifikasi", "f6.d": "winget mencocokkan hash setiap installer dengan manifest-nya. Tanpa telemetri, tanpa akun, tanpa iklan.",
+    "shot1": "Semua aplikasi terpasang, lengkap dengan folder dan status update",
+    "shot2": "Pilih salah satu dari 5 versi terakhir untuk kembali",
+    "inst.eyebrow": "Cara pasang", "inst.title": "Siap dalam kurang dari semenit",
+    "s1.t": "Unduh installer", "s1.d": "Ambil file <code>.msi</code> dari <a href=\"https://github.com/savoreux/winsta/releases/latest\">rilis terbaru</a>.",
+    "s2.t": "Pilih folder", "s2.d": "Jalankan file-nya. Di halaman Destination Folder, klik Change… untuk memasang Winsta di drive mana saja.",
+    "s3.t": "Buka Winsta", "s3.d": "Buka dari Start menu. Winsta memindai aplikasi yang sudah ada di PC-mu dan memeriksa update.",
+    "inst.note": "<b>Muncul \"Windows protected your PC\"?</b> Klik <b>More info → Run anyway</b>. Installer belum ditandatangani (code signing), jadi Windows belum mengenalinya. Installer dibuat terbuka oleh GitHub Actions, dan setiap rilis mencantumkan checksum SHA-256.",
+    "inst.req": "Butuh Windows 10 (1809 atau lebih baru) atau Windows 11, 64-bit, dengan winget (App Installer). winget sudah bawaan Windows 11.",
+    "faq.title": "Pertanyaan",
+    "q1": "Apakah Winsta gratis?", "a1": "Ya. Winsta gratis dan open source dengan lisensi GPL-3.0. Tidak ada iklan, akun, atau versi berbayar.",
+    "q2": "Ada aplikasi terpasang yang tidak muncul. Kenapa?", "a2": "Winsta membaca daftar dari winget. Di halaman Terpasang, klik Pasang modul untuk menambahkan modul resmi Microsoft.WinGet.Client, supaya nama dan ID terbaca lengkap. Aplikasi yang dipasang di luar winget ada di bagian \"Aplikasi lain terpasang\".",
+    "q3": "Kenapa tertulis \"Lokasi tidak dicatat installer\"?", "a3": "Sebagian installer tidak mencatat folder pemasangannya di Windows. Aplikasinya tetap terdeteksi dari nama dan ID-nya, dan tetap bisa di-update atau di-uninstall.",
+    "q4": "Apakah semua aplikasi bisa dipasang di folder pilihan?", "a4": "Tergantung installer-nya. MSI dan aplikasi portable selalu mengikuti folder pilihanmu; sebagian installer .exe bisa mengabaikannya, dan paket MSIX ditempatkan oleh Windows. Winsta memberi tahu sebelum install, dan setelahnya bila installer memakai lokasinya sendiri.",
+    "q5": "Apakah Winsta mengumpulkan data saya?", "a5": "Tidak. Winsta tidak punya telemetri atau analitik. Winsta hanya terhubung ke sumber winget dan GitHub saat kamu mencari, memasang, atau meng-update.",
+    "q6": "Bagaimana cara uninstall Winsta?", "a6": "Buka Windows Settings → Apps → Installed apps → Winsta → Uninstall. Aplikasi yang kamu pasang lewat Winsta tetap terpasang.",
+    "sup.title": "Winsta gratis, selamanya", "sup.lead": "Kalau Winsta menghemat waktumu, kamu bisa mendukung pengembangannya lewat Saweria, atau beri bintang di GitHub.",
+    "sup.star": "Beri bintang di GitHub",
+    "ft.releases": "Rilis", "ft.issues": "Laporkan masalah", "ft.privacy": "Privasi",
+    "nav.feedback": "Masukan",
+    "st.downloads": "Unduhan", "st.stars": "Bintang GitHub", "st.version": "Versi terbaru", "st.updated": "Rilis terakhir",
+    "fb.eyebrow": "Masukan", "fb.title": "Bantu Winsta jadi lebih baik",
+    "fb.lead": "Menemukan bug atau ada yang kurang? Setiap laporan dibaca. Kamu perlu akun GitHub (gratis) untuk mengirimnya.",
+    "fb1.t": "Laporkan bug", "fb1.d": "Aplikasi gagal di-install, di-update, atau di-uninstall, atau Winsta menampilkan error. Ceritakan apa yang kamu lakukan dan apa yang terjadi.", "fb1.go": "Laporkan bug →",
+    "fb2.t": "Usulkan fitur", "fb2.d": "Ada yang kamu harap bisa dilakukan Winsta? Bagikan idenya dan bagaimana kamu akan memakainya.", "fb2.go": "Kirim ide →",
+    "fb3.t": "Lihat masukan lain", "fb3.d": "Cek apakah sudah ada yang melaporkan hal yang sama, lalu beri 👍 atau komentar agar cepat diperbaiki.", "fb3.go": "Lihat semua →"
+  };
+
+  // Simpan teks Inggris asli, lalu ganti sesuai bahasa.
+  var EN = {};
+  document.querySelectorAll("[data-i18n]").forEach(function (el) { EN[el.dataset.i18n] = el.textContent; });
+  document.querySelectorAll("[data-i18n-html]").forEach(function (el) { EN[el.dataset.i18nHtml] = el.innerHTML; });
+
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+  var lang = load("winsta-lang") || ((navigator.language || "").toLowerCase().indexOf("id") === 0 ? "id" : "en");
+  function applyLang() {
+    var dict = lang === "id" ? ID : EN;
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-i18n]").forEach(function (el) { var v = dict[el.dataset.i18n]; if (v != null) el.textContent = v; });
+    document.querySelectorAll("[data-i18n-html]").forEach(function (el) { var v = dict[el.dataset.i18nHtml]; if (v != null) el.innerHTML = v; });
+    document.getElementById("lang-text").textContent = lang === "id" ? "EN" : "ID";
+    document.getElementById("lang").setAttribute("aria-label", lang === "id" ? "Switch to English" : "Ganti ke Bahasa Indonesia");
+    if (release || stats) showRelease();
+  }
+  document.getElementById("lang").addEventListener("click", function () {
+    lang = lang === "id" ? "en" : "id"; store("winsta-lang", lang); applyLang();
+  });
+
+  document.getElementById("theme").addEventListener("click", function () {
+    var root = document.documentElement;
+    var dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+    store("winsta-theme", root.dataset.theme);
+  });
+
+  // Statistik dan tombol Download dari API GitHub. Disimpan 10 menit di browser agar hemat kuota
+  // (tanpa login, GitHub mengizinkan 60 permintaan per jam per pengunjung).
+  var release = null, stats = null;
+  var REPO = "https://api.github.com/repos/savoreux/winsta";
+  function fmt(n) { return Number(n).toLocaleString(lang === "id" ? "id-ID" : "en-US"); }
+  function fmtDate(d) { return new Date(d).toLocaleDateString(lang === "id" ? "id-ID" : "en-US", { day: "numeric", month: "short", year: "numeric" }); }
+  function set(id, text) { var el = document.getElementById(id); el.textContent = text; el.classList.remove("loading"); }
+  function showRelease() {
+    if (stats) {
+      set("st-downloads", fmt(stats.downloads));
+      set("st-stars", fmt(stats.stars));
+    }
+    if (!release) return;
+    var size = (release.asset.size / 1048576).toFixed(1);
+    set("st-version", release.version);
+    set("st-date", fmtDate(release.date));
+    document.getElementById("meta").textContent = release.version + " · " + size + " MB · " + fmtDate(release.date) + " · Windows 10 & 11 · 64-bit · GPL-3.0";
+    document.getElementById("pill-text").textContent = (lang === "id" ? "Winsta " + release.version + " sudah tersedia" : "Winsta " + release.version + " is out");
+  }
+  function use(data) {
+    stats = { stars: data.stars, downloads: data.downloads };
+    if (data.release) {
+      release = data.release;
+      document.getElementById("download").href = release.asset.browser_download_url;
+    }
+    showRelease();
+  }
+  function getJSON(url) {
+    return fetch(url, { headers: { Accept: "application/vnd.github+json" } }).then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    });
+  }
+  (function loadStats() {
+    try {
+      var cached = JSON.parse(localStorage.getItem("winsta-stats") || "null");
+      if (cached && Date.now() - cached.at < 10 * 60 * 1000) { use(cached.data); return; }
+    } catch (e) {}
+    Promise.all([getJSON(REPO), getJSON(REPO + "/releases?per_page=100")]).then(function (res) {
+      var repo = res[0], releases = res[1] || [];
+      var downloads = 0, latest = null;
+      releases.forEach(function (r) {
+        if (r.draft) return;
+        (r.assets || []).forEach(function (a) { if (/\.msi$/i.test(a.name)) downloads += a.download_count || 0; });
+        if (!latest && !r.prerelease) latest = r;
+      });
+      var asset = latest && (latest.assets || []).find(function (a) { return /\.msi$/i.test(a.name); });
+      var data = {
+        stars: repo.stargazers_count || 0,
+        downloads: downloads,
+        release: asset ? { version: latest.tag_name, date: latest.published_at, asset: { size: asset.size, browser_download_url: asset.browser_download_url } } : null
+      };
+      try { localStorage.setItem("winsta-stats", JSON.stringify({ at: Date.now(), data: data })); } catch (e) {}
+      use(data);
+    }).catch(function () {
+      // Batas API habis atau offline: tombol tetap mengarah ke halaman rilis.
+      ["st-downloads", "st-stars", "st-version", "st-date"].forEach(function (id) { document.getElementById(id).title = "GitHub API unavailable"; });
+    });
+  })();
+
+  applyLang();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+name: 🐞 Bug report / Laporan bug
+description: Something in Winsta doesn't work. / Ada yang tidak berjalan di Winsta.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! English or Bahasa Indonesia are both fine.
+        Terima kasih sudah melapor! Boleh pakai bahasa Inggris atau Indonesia.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened? / Apa yang terjadi?
+      description: Include the exact error message if there is one. / Sertakan pesan error-nya bila ada.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce / Langkah-langkahnya
+      placeholder: |
+        1. Search for "VLC"
+        2. Click Install, choose D:\Apps
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: app
+    attributes:
+      label: Which app were you installing/updating? / Aplikasi apa yang dipasang/di-update?
+      placeholder: e.g. VideoLAN.VLC or github.com/owner/repo
+  - type: input
+    id: winsta
+    attributes:
+      label: Winsta version / Versi Winsta
+      description: Settings → About
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version / Versi Windows
+      description: Press Win + R, type `winver`, press Enter.
+      placeholder: Windows 11 24H2 (26100.xxxx)
+    validations:
+      required: true
+  - type: input
+    id: winget
+    attributes:
+      label: winget version
+      description: Run `winget --version` in PowerShell.
+      placeholder: v1.12.440
+  - type: textarea
+    id: output
+    attributes:
+      label: Output / screenshot
+      description: In Winsta, open Queue → "Show output", copy it here, or attach a screenshot.
+      render: text

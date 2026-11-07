@@ -21,6 +21,7 @@
 
 <p align="center">
   <a href="https://github.com/savoreux/winsta/releases/latest"><b>⬇️ Download Winsta</b></a> ·
+  <a href="https://savoreux.github.io/winsta/"><b>🌐 Website</b></a> ·
   <a href="#-quick-start">🚀 Quick start</a> ·
   <a href="#-features">✨ Features</a> ·
   <a href="#-privacy--clean-uninstall">🔒 Privacy</a>
