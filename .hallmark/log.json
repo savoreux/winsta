@@ -1,0 +1,31 @@
+[
+ {
+  "mode": "redesign",
+  "depth": "full",
+  "scope": "page",
+  "shape": "stat-led",
+  "theme": "brand",
+  "axes": "light/grotesk-sans/chromatic-blue",
+  "hero": "settled",
+  "nav": "floating pill",
+  "footer": "letter close",
+  "imagery": "screenshots 6",
+  "photos": [],
+  "entry": "none",
+  "fingerprint": "settled/figures/switcher/rows/band/rows/split",
+  "sections": [
+   "hero",
+   "figures",
+   "switcher",
+   "rows",
+   "band",
+   "rows",
+   "split",
+   "footer"
+  ],
+  "signature": "the install dialog with D:\\Apps chosen, large in the hero",
+  "waived": [],
+  "prompt": "a free Windows app manager download page",
+  "date": "2026-11-07"
+ }
+]
