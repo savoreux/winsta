@@ -15,6 +15,7 @@
   --font-display: "Geist", "Segoe UI Variable Display", "Segoe UI", ui-sans-serif, system-ui, sans-serif; --font-body: "Geist", "Segoe UI Variable Text", "Segoe UI", ui-sans-serif, system-ui, sans-serif; --font-outlier: "Geist Mono", "Cascadia Mono", Consolas, ui-monospace, monospace;
   --radius-card: 8px; --radius-pill: 999px; --rule-hair: 1px; --shadow-card: 0 1px 2px oklch(20% 0.01 250 / 0.06);
   --shadow-plate: 0 1px 2px oklch(20% 0.01 250 / 0.06);
+  --color-field: oklch(95.5% 0.022 245);
   --display-weight: 600;
   color-scheme: light;
   --tracking-display: -0.02em;
@@ -25,6 +26,7 @@
   --color-ink: oklch(95% 0.006 250); --color-ink-2: oklch(81% 0.009 250); --color-muted: oklch(69% 0.011 250);
   --color-rule: oklch(30% 0.012 250);
   --color-accent: oklch(72% 0.12 242); --color-accent-ink: oklch(16% 0.012 250); --color-focus: oklch(74% 0.14 242);
+  --color-field: oklch(20% 0.03 245);
   --shadow-card: none; --shadow-plate: inset 0 0 0 1px oklch(30% 0.012 250);
   color-scheme: dark;
 }

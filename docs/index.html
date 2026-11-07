@@ -68,8 +68,8 @@
           </a>
           <a class="btn btn--quiet" href="https://github.com/savoreux/winsta" data-i18n="hero.source">View source</a>
         </div>
-        <p class="hero__meta" id="meta" data-i18n="hero.meta">Windows 10 and 11, 64-bit, free under GPL-3.0</p>
-        <p class="cmd"><code>winget install Savoreux.Winsta</code><span data-i18n="hero.soon">Coming soon</span></p>
+        <p class="hero__meta" id="meta" data-i18n="hero.meta">Free .msi installer for Windows 10 and 11, 64-bit.</p>
+        <p class="hero__note" data-i18n-html="hero.note">Windows may show a SmartScreen warning the first time. <a class="link" href="#install">Why it’s safe to run</a></p>
       </div>
       <figure class="hero__visual">
         <div class="plate" data-slot="hero" data-kind="product" data-alt="Winsta’s install dialog with a custom folder chosen">
@@ -100,49 +100,42 @@
         <h2 data-i18n="feat.title">winget, without the command line</h2>
         <p class="lead" data-i18n="feat.lead">Winsta runs Microsoft’s winget for you and adds what it leaves out: install folders, version history and a clean uninstall.</p>
       </div>
-      <div class="switch" data-switch>
-        <div class="tabs" role="tablist" aria-label="Winsta features" data-i18n-label="feat.tabs">
-          <button type="button" role="tab" id="t-loc" aria-controls="p-loc" aria-selected="true" data-i18n="tab.loc">Install location</button>
-          <button type="button" role="tab" id="t-upd" aria-controls="p-upd" aria-selected="false" tabindex="-1" data-i18n="tab.upd">Updates</button>
-          <button type="button" role="tab" id="t-rb" aria-controls="p-rb" aria-selected="false" tabindex="-1" data-i18n="tab.rb">Roll back</button>
-          <button type="button" role="tab" id="t-gh" aria-controls="p-gh" aria-selected="false" tabindex="-1" data-i18n="tab.gh">GitHub apps</button>
-          <button type="button" role="tab" id="t-un" aria-controls="p-un" aria-selected="false" tabindex="-1" data-i18n="tab.un">Clean uninstall</button>
-        </div>
-        <div class="panel" role="tabpanel" id="p-loc" aria-labelledby="t-loc">
-          <div>
+      <div class="bento">
+        <article class="tile tile--wide">
+          <div class="tile__text">
             <h3 data-i18n="f1.t">Choose the install location</h3>
             <p data-i18n="f1.d">Install to Winsta’s default folder or any folder you pick, like drive D: to save space on your system SSD. Winsta tells you whether each installer type supports a custom folder and checks free disk space first.</p>
           </div>
-          <figure class="plate" data-kind="product"><img src="assets/screens/installed.webp" width="2560" height="1640" loading="lazy" alt="The Installed page listing each app with its folder, such as D:\Apps\vscode, and its update status" data-i18n-alt="f1.alt" /></figure>
-        </div>
-        <div class="panel" role="tabpanel" id="p-upd" aria-labelledby="t-upd">
-          <div>
-            <h3 data-i18n="f2.t">Updates when you open it</h3>
-            <p data-i18n="f2.d">No background process or tray icon. New versions show as a number on the Update menu.</p>
-          </div>
-          <figure class="plate" data-kind="product"><img src="assets/screens/updates.webp" width="2096" height="1100" loading="lazy" alt="The Update page with five apps that have new versions and an Update all button" data-i18n-alt="f2.alt" /></figure>
-        </div>
-        <div class="panel" role="tabpanel" id="p-rb" aria-labelledby="t-rb">
-          <div>
+          <figure class="plate" data-kind="product"><img src="assets/screens/installed-crop.webp" width="1620" height="950" loading="lazy" alt="The Installed page listing each app with its folder, such as D:\Apps\vscode marked custom, and its update status" data-i18n-alt="f1.alt" /></figure>
+        </article>
+        <article class="tile">
+          <div class="tile__text">
             <h3 data-i18n="f3.t">Roll back up to 5 versions</h3>
             <p data-i18n="f3.d">Go back to an earlier version and pin it, so Update all leaves it alone.</p>
           </div>
           <figure class="plate" data-kind="product"><img src="assets/screens/rollback.webp" width="1040" height="1276" loading="lazy" alt="The rollback dialog for 7-Zip listing the active version and four earlier ones" data-i18n-alt="f3.alt" /></figure>
-        </div>
-        <div class="panel" role="tabpanel" id="p-gh" aria-labelledby="t-gh">
-          <div>
-            <h3 data-i18n="f4.t">Apps from GitHub too</h3>
-            <p data-i18n="f4.d">Search GitHub or paste a repo address. Winsta picks the right Windows file and checks its SHA-256 hash.</p>
+        </article>
+        <article class="tile tile--wide">
+          <div class="tile__text">
+            <h3 data-i18n="f2.t">Updates when you open it</h3>
+            <p data-i18n="f2.d">No background process or tray icon. New versions show as a number on the Update menu.</p>
           </div>
-          <figure class="plate" data-kind="product"><img src="assets/screens/github.webp" width="2096" height="1110" loading="lazy" alt="Search results for obs, with one result from winget and one from GitHub" data-i18n-alt="f4.alt" /></figure>
-        </div>
-        <div class="panel" role="tabpanel" id="p-un" aria-labelledby="t-un">
-          <div>
+          <figure class="plate" data-kind="product"><img src="assets/screens/updates-crop.webp" width="2056" height="840" loading="lazy" alt="The Update page with apps that have new versions and an Update all button" data-i18n-alt="f2.alt" /></figure>
+        </article>
+        <article class="tile">
+          <div class="tile__text">
             <h3 data-i18n="f5.t">Clean uninstall</h3>
-            <p data-i18n="f5.d">After the uninstaller runs, Winsta finds leftover folders, AppData, and shortcuts, and deletes the ones you check.</p>
+            <p data-i18n="f5.d">After the uninstaller runs, Winsta finds leftover folders, app data, and shortcuts, and deletes the ones you check.</p>
           </div>
-          <figure class="plate" data-kind="product"><img src="assets/screens/leftovers.webp" width="1040" height="960" loading="lazy" alt="The clean-up dialog listing four folders and a shortcut Notepad++ left behind, each with a checkbox" data-i18n-alt="f5.alt" /></figure>
-        </div>
+          <figure class="plate" data-kind="product"><img src="assets/screens/leftovers.webp" width="1040" height="960" loading="lazy" alt="The clean-up dialog listing folders and a shortcut Notepad++ left behind, each with a checkbox" data-i18n-alt="f5.alt" /></figure>
+        </article>
+        <article class="tile tile--full">
+          <div class="tile__text">
+            <h3 data-i18n="f4.t">Apps from GitHub too</h3>
+            <p data-i18n="f4.d">Search GitHub or paste a repo address. Winsta picks the right Windows file and checks its fingerprint (SHA-256), so you get the file the developer published.</p>
+          </div>
+          <figure class="plate" data-kind="product"><img src="assets/screens/github-crop.webp" width="1355" height="810" loading="lazy" alt="Search results for obs, with one result from winget and one from GitHub" data-i18n-alt="f4.alt" /></figure>
+        </article>
       </div>
     </div>
   </section>
@@ -157,8 +150,9 @@
         <li><h3><span class="n">1</span><span data-i18n="s1.t">Download the installer</span></h3><p data-i18n-html="s1.d">Get the <code>.msi</code> file from the <a class="link" data-download href="https://github.com/savoreux/winsta/releases/latest">latest release</a>.</p></li>
         <li><h3><span class="n">2</span><span data-i18n="s2.t">Pick a folder</span></h3><p data-i18n="s2.d">Run it. On the Destination Folder page, click Change… to install Winsta on any drive.</p></li>
         <li><h3><span class="n">3</span><span data-i18n="s3.t">Open Winsta</span></h3><p data-i18n="s3.d">Start it from the Start menu. It scans the apps already on your PC and checks for updates.</p></li>
-        <li><h3 data-i18n="inst.warn.t">“Windows protected your PC”?</h3><p data-i18n="inst.warn.d">Click More info, then Run anyway. The installer isn’t code-signed yet, so Windows doesn’t recognize it. It’s built in the open by GitHub Actions, and every release lists its SHA-256 checksum.</p></li>
-        <li><h3 data-i18n="f6.t">Every installer verified</h3><p data-i18n="f6.d">winget checks each installer’s hash against its manifest. No telemetry, no account, no ads.</p></li>
+        <li><h3 data-i18n="inst.warn.t">“Windows protected your PC”?</h3><p data-i18n="inst.warn.d">Click More info, then Run anyway. The installer isn’t code-signed yet, so Windows doesn’t recognize it. It’s built in the open by GitHub Actions, and every release lists its fingerprint (SHA-256) so you can check the file.</p></li>
+        <li><h3 data-i18n="inst.winget.t">Prefer winget?</h3><p><span data-i18n="inst.winget.d">Coming soon, once Winsta is accepted into Microsoft’s catalog:</span> <code>winget install Savoreux.Winsta</code></p></li>
+        <li><h3 data-i18n="f6.t">Every installer verified</h3><p data-i18n="f6.d">Before installing, winget checks that every file matches the one its publisher listed. No telemetry, no account, no ads.</p></li>
       </ol>
     </div>
   </section>
@@ -200,7 +194,7 @@
         <p class="lead" data-i18n="sup.lead">If it saves you time, you can support development on Saweria, or star the project on GitHub.</p>
         <div class="close__actions">
           <a class="btn" data-download href="https://github.com/savoreux/winsta/releases/latest" data-i18n="hero.download">Download for Windows</a>
-          <a class="btn btn--quiet" href="https://saweria.co/davidhandy">Support on Saweria</a>
+          <a class="btn btn--quiet" href="https://saweria.co/davidhandy" data-i18n="sup.saweria">Support on Saweria</a>
         </div>
         <p class="close__star"><a class="link" href="https://github.com/savoreux/winsta" data-i18n="sup.star">Star on GitHub</a></p>
       </div>
@@ -233,8 +227,11 @@
     "hero.title": "Install, update & rollback aplikasi Windows",
     "hero.lead": "Pengelola aplikasi gratis dan open-source di atas winget.",
     "hero.download": "Download untuk Windows", "hero.source": "Lihat kode",
-    "hero.meta": "Windows 10 dan 11, 64-bit, gratis dengan lisensi GPL-3.0",
-    "hero.soon": "Segera hadir",
+    "hero.meta": "Installer .msi gratis untuk Windows 10 dan 11, 64-bit.",
+    "hero.note": "Windows mungkin menampilkan peringatan SmartScreen saat pertama dibuka. <a class=\"link\" href=\"#install\">Kenapa aman dijalankan</a>",
+    "inst.winget.t": "Lebih suka winget?",
+    "inst.winget.d": "Segera hadir, setelah Winsta diterima di katalog Microsoft:",
+    "sup.saweria": "Dukung lewat Saweria",
     "hero.caption": "Folder mana saja, drive mana saja: di sini Brave dipasang ke D:\\Apps.",
     "hero.alt": "Dialog install Winsta untuk Brave, dengan D:\\Apps dipilih sebagai folder install dan sisa ruang drive D terlihat",
     "st.title": "Winsta dalam angka",
@@ -245,14 +242,14 @@
     "feat.tabs": "Fitur Winsta",
     "tab.loc": "Lokasi install", "tab.upd": "Update", "tab.rb": "Rollback", "tab.gh": "Aplikasi GitHub", "tab.un": "Uninstall bersih",
     "f1.t": "Pilih lokasi install", "f1.d": "Pasang ke folder default Winsta atau folder pilihanmu, misalnya drive D: untuk menghemat SSD sistem. Winsta memberi tahu apakah jenis installer mendukung folder kustom, dan memeriksa ruang disk lebih dulu.",
-    "f1.alt": "Halaman Terpasang berisi setiap aplikasi dengan foldernya, misalnya D:\\Apps\\vscode, dan status update-nya",
+    "f1.alt": "Halaman Terpasang berisi setiap aplikasi dengan foldernya, misalnya D:\\Apps\\vscode bertanda kustom, dan status update-nya",
     "f2.t": "Cek update saat dibuka", "f2.d": "Tanpa proses latar belakang atau ikon system tray. Versi baru tampil sebagai angka di menu Update.",
-    "f2.alt": "Halaman Update dengan lima aplikasi yang punya versi baru dan tombol Update semua",
+    "f2.alt": "Halaman Update dengan aplikasi yang punya versi baru dan tombol Update semua",
     "f3.t": "Rollback hingga 5 versi", "f3.d": "Kembali ke versi sebelumnya lalu kunci, supaya tidak ikut Update semua.",
     "f3.alt": "Dialog rollback 7-Zip berisi versi aktif dan empat versi sebelumnya",
-    "f4.t": "Aplikasi dari GitHub juga", "f4.d": "Cari di GitHub atau tempel alamat repo. Winsta memilih file Windows yang tepat dan memeriksa hash SHA-256-nya.",
+    "f4.t": "Aplikasi dari GitHub juga", "f4.d": "Cari di GitHub atau tempel alamat repo. Winsta memilih file Windows yang tepat dan memeriksa sidik jarinya (SHA-256), supaya file yang kamu dapat sama dengan yang dirilis pengembangnya.",
     "f4.alt": "Hasil pencarian obs, satu dari winget dan satu dari GitHub",
-    "f5.t": "Uninstall bersih", "f5.d": "Setelah uninstaller selesai, Winsta mencari sisa folder, AppData, dan shortcut, lalu menghapus yang kamu centang.",
+    "f5.t": "Uninstall bersih", "f5.d": "Setelah uninstaller selesai, Winsta mencari sisa folder, data aplikasi, dan shortcut, lalu menghapus yang kamu centang.",
     "f5.alt": "Dialog pembersihan berisi folder dan shortcut yang ditinggalkan Notepad++, masing-masing dengan kotak centang",
     "inst.title": "Siap dalam kurang dari semenit",
     "inst.req": "Butuh Windows 10 (1809 atau lebih baru) atau Windows 11, 64-bit, dengan winget (App Installer). winget sudah bawaan Windows 11.",
@@ -260,8 +257,8 @@
     "s2.t": "Pilih folder", "s2.d": "Jalankan file-nya. Di halaman Destination Folder, klik Change… untuk memasang Winsta di drive mana saja.",
     "s3.t": "Buka Winsta", "s3.d": "Buka dari Start menu. Winsta memindai aplikasi yang sudah ada di PC-mu dan memeriksa update.",
     "inst.warn.t": "Muncul “Windows protected your PC”?",
-    "inst.warn.d": "Klik More info, lalu Run anyway. Installer belum ditandatangani (code signing), jadi Windows belum mengenalinya. Installer dibuat terbuka oleh GitHub Actions, dan setiap rilis mencantumkan checksum SHA-256.",
-    "f6.t": "Setiap installer diverifikasi", "f6.d": "winget mencocokkan hash setiap installer dengan manifest-nya. Tanpa telemetri, tanpa akun, tanpa iklan.",
+    "inst.warn.d": "Klik More info, lalu Run anyway. Installer belum ditandatangani (code signing), jadi Windows belum mengenalinya. Installer dibuat terbuka oleh GitHub Actions, dan setiap rilis mencantumkan sidik jari file (SHA-256) yang bisa kamu cek.",
+    "f6.t": "Setiap installer diverifikasi", "f6.d": "Sebelum memasang, winget memastikan setiap file sama dengan yang dicantumkan penerbitnya. Tanpa telemetri, tanpa akun, tanpa iklan.",
     "fb.title": "Bantu Winsta jadi lebih baik",
     "fb.lead": "Menemukan bug atau ada yang kurang? Setiap laporan dibaca. Kamu perlu akun GitHub (gratis) untuk mengirimnya.",
     "fb1.t": "Laporkan bug", "fb1.d": "Aplikasi gagal di-install, di-update, atau di-uninstall, atau Winsta menampilkan error. Ceritakan apa yang kamu lakukan dan apa yang terjadi.",
@@ -368,8 +365,8 @@
     set("st-version", release.version);
     set("st-date", fmtDate(release.date));
     document.getElementById("meta").textContent = lang === "id"
-      ? release.version + ", " + size + " MB, rilis " + fmtDate(release.date) + ". Windows 10 dan 11, 64-bit."
-      : release.version + ", " + size + " MB, released " + fmtDate(release.date) + ". Windows 10 and 11, 64-bit.";
+      ? "Installer .msi gratis, " + size + " MB, " + release.version + " (" + fmtDate(release.date) + "). Windows 10 dan 11, 64-bit."
+      : "Free .msi installer, " + size + " MB, " + release.version + " (" + fmtDate(release.date) + "). Windows 10 and 11, 64-bit.";
   }
   function use(data) {
     stats = { stars: data.stars, downloads: data.downloads };

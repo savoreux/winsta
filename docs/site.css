@@ -1,12 +1,13 @@
 /* Hallmark · shape: Stat-Led (swapped: the live figures open the first section, not the hero) · genre: modern-minimal · theme: brand · redesign: full · job: try · draw: ad001c · modes: light+dark
  * paper: oklch(98.6% 0.004 250) · accent: oklch(52% 0.15 245) · display: Geist · body: Geist · hero: Settled · nav: floating pill · footer: letter close · signature: the install dialog with D:\Apps chosen as the folder, set large in the hero
- * axes: light/grotesk-sans/chromatic-blue · posture: Restrained · contrast: pass · fold: pass · imagery: screenshots 6 (the Winsta demo build, captured with Playwright) · v2.0.0 */
+ * axes: light/grotesk-sans/chromatic-blue · posture: Committed (the brand blue carries the primary action, the stat figures and one tinted band) · contrast: pass · fold: pass · imagery: screenshots 6 (the Winsta demo build, captured with Playwright) · v2.0.0 */
 /* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V4 · weakest: P, a download page has little to argue; the hero shows the one thing winget alone cannot do (picking D:\Apps) instead of a generic dashboard */
 /* Hallmark · dropped #pill-text · 58 names it (a third text block above the hero's actions); the version now sits under the download button */
 /* Hallmark · reworded "Everything winget can do, without typing commands" to "winget, without the command line" · 58 names it (section heads six words or fewer) */
 /* Hallmark · reworded the three install step headings to carry their step number inside the heading · 54 names the old numbered circles as ordinal eyebrows */
 /* Hallmark · reworded the three feedback headings into link titles · 3 names the icon-tile cards they sat in; the words are unchanged */
 /* Hallmark · dropped screenshot-installed-dark.png, screenshot-rollback-dark.png · replaced by fresh captures of the same screens in assets/screens */
+/* Hallmark · refined after an Impeccable critique (22/32): hero head down a step, brand blue on actions and figures, all five features visible as a bento of cropped captures, SmartScreen reassurance under the download, plain-language copy for SHA-256 and AppData */
 /* Hallmark · dismissed 42 · the nav is a floating pill holding a wordmark, four anchors and three tools, stamped nav: floating pill */
 @import url("./tokens.css");
 @import url("./base.css");
@@ -48,12 +49,12 @@
 .btn {
   display: inline-flex; align-items: center; gap: var(--space-xs);
   min-height: 48px; padding: 0 var(--space-lg);
-  border: 1px solid var(--color-ink); border-radius: var(--radius-pill);
-  background: var(--color-ink); color: var(--color-paper);
+  border: 1px solid var(--color-accent); border-radius: var(--radius-pill);
+  background: var(--color-accent); color: var(--color-accent-ink);
   font: 500 var(--text-md)/1 var(--font-body); white-space: nowrap; text-decoration: none; cursor: pointer;
   transition: background-color var(--dur-short) var(--ease-out), transform var(--dur-micro) var(--ease-out);
 }
-.btn:hover { background: var(--color-ink-2); }
+.btn:hover { background: color-mix(in oklab, var(--color-accent) 86%, var(--color-ink)); }
 .btn:active { transform: translateY(1px); }
 .btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 .btn:disabled, .btn[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; transform: none; }
@@ -74,16 +75,17 @@
 /* ---------- Hero (Settled) ---------- */
 .hero { padding-block: var(--space-xl) 0; }
 .hero__grid {
-  display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--space-3xl); align-items: center;
+  display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: var(--space-2xl); align-items: center;
   min-height: min(calc(100dvh - 112px), 800px);
 }
-.hero h1 { max-width: 13ch; }
+.hero h1 { max-width: 16ch; font-size: var(--text-display-s); }
 .hero .lead { margin-top: var(--space-lg); color: var(--color-ink-2); max-width: 34ch; }
 .hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-xl); }
 .hero__meta { margin-top: var(--space-md); font-size: var(--text-sm); color: var(--color-muted); font-variant-numeric: tabular-nums; }
+.hero__note { margin-top: var(--space-2xs); font-size: var(--text-sm); color: var(--color-muted); }
 .cmd { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-xs) var(--space-sm); margin-top: var(--space-lg); font-size: var(--text-sm); color: var(--color-muted); }
 .cmd code { padding: var(--space-2xs) var(--space-sm); border-radius: var(--radius-card); background: var(--color-paper-2); color: var(--color-ink); font-family: var(--font-outlier); font-size: var(--text-sm); }
-.hero__visual { justify-self: end; width: 100%; max-width: 520px; margin: 0; }
+.hero__visual { justify-self: start; width: 100%; max-width: 560px; margin: 0; }
 .hero__visual .plate { aspect-ratio: 1200 / 1516; }
 
 /* ---------- Figures ---------- */
@@ -91,35 +93,25 @@
 .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; border-block: 1px solid var(--color-rule); }
 .stat { display: flex; flex-direction: column; padding: var(--space-xl) var(--space-lg); border-left: 1px solid var(--color-rule); }
 .stat:first-child { padding-left: 0; border-left: 0; }
-.stat dd { order: -1; margin: 0; font: var(--display-weight) var(--text-3xl)/1.1 var(--font-display); letter-spacing: var(--tracking-display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.stat dd { order: -1; margin: 0; color: var(--color-accent); font: var(--display-weight) var(--text-3xl)/1.1 var(--font-display); letter-spacing: var(--tracking-display); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .stat dd.loading { color: var(--color-muted); }
 .stat dd.unavailable { font: 500 var(--text-lg)/1.2 var(--font-body); letter-spacing: 0; }
 .stat dt { margin-top: var(--space-sm); font-size: var(--text-sm); color: var(--color-ink-2); }
 .stats-note { margin-top: var(--space-sm); font-size: var(--text-sm); color: var(--color-muted); }
 
-/* ---------- Features (Switcher) ---------- */
+/* ---------- Features (Bento) ---------- */
 .features { padding-block: var(--section-gap) 0; }
 .head-split { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--gap-columns); align-items: end; }
 .head-split h2 { grid-column: 1 / 7; }
 .head-split .lead { grid-column: 8 / 13; color: var(--color-ink-2); }
-.tabs { display: flex; flex-wrap: wrap; gap: var(--space-2xs); margin-top: var(--space-2xl); padding: var(--space-2xs); border: 1px solid var(--color-rule); border-radius: var(--radius-pill); width: fit-content; max-width: 100%; }
-.tabs button {
-  min-height: 44px; padding: 0 var(--space-md); border: 0; border-radius: var(--radius-pill);
-  background: transparent; color: var(--color-ink-2); font: 500 var(--text-sm)/1 var(--font-body); white-space: nowrap; cursor: pointer;
-  transition: background-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out);
-}
-.tabs button:hover { color: var(--color-ink); background: var(--color-paper-2); }
-.tabs button:active { background: var(--color-paper-3); }
-.tabs button[aria-selected="true"] { background: var(--color-paper-3); color: var(--color-ink); }
-.tabs button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
-.tabs button:disabled { opacity: 0.55; cursor: not-allowed; }
-html:not(.js) .tabs { display: none; }
-.panel { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: var(--space-3xl); align-items: center; margin-top: var(--space-xl); }
-html:not(.js) .panel + .panel { margin-top: var(--space-3xl); }
-.panel h3 { font-size: var(--text-xl); }
-.panel p { margin-top: var(--space-md); color: var(--color-ink-2); max-width: 45ch; }
-.panel .plate { min-height: 360px; display: grid; place-items: center; padding: var(--space-lg); }
-.panel .plate > img { max-height: 560px; width: auto; }
+.bento { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--gap-columns); margin-top: var(--space-2xl); }
+.tile { grid-column: span 5; display: flex; flex-direction: column; gap: var(--space-lg); padding: var(--space-xl); border-radius: var(--radius-card); background: var(--color-paper-2); }
+.tile--wide { grid-column: span 7; }
+.tile--full { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); align-items: center; gap: var(--space-3xl); }
+.tile h3 { font-size: var(--text-xl); }
+.tile p { margin-top: var(--space-sm); color: var(--color-ink-2); max-width: 52ch; }
+.tile .plate { background: var(--color-paper); }
+.tile .plate > img { width: 100%; }
 
 /* ---------- Install (Rows) ---------- */
 .install { padding-block: var(--section-gap-l) 0; }
@@ -134,7 +126,7 @@ html:not(.js) .panel + .panel { margin-top: var(--space-3xl); }
 .rows p { color: var(--color-ink-2); }
 
 /* ---------- Feedback (Band) ---------- */
-.feedback { margin-top: var(--section-gap); padding-block: var(--section-gap-s); background: var(--color-paper-2); }
+.feedback { margin-top: var(--section-gap); padding-block: var(--section-gap-s); background: var(--color-field); }
 .feedback .rows-head { grid-column: 1 / 6; }
 .fb-list { grid-column: 7 / 13; display: grid; gap: var(--space-md); margin: 0; padding: 0; list-style: none; }
 .fb-list a {
@@ -189,13 +181,13 @@ html:not(.js) .panel + .panel { margin-top: var(--space-3xl); }
 /* ---------- Responsive ---------- */
 @media (max-width: 60rem) {
   .nav__links { display: none; }
-  .hero__grid, .panel, .close__grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-xl); min-height: 0; }
+  .hero__grid, .close__grid, .tile--full { grid-template-columns: minmax(0, 1fr); gap: var(--space-xl); min-height: 0; }
+  .tile, .tile--wide, .tile--full { grid-column: 1 / -1; }
   .hero__visual { justify-self: start; max-width: 440px; }
   .head-split h2, .head-split .lead, .rows-wrap > .rows-head, .rows, .faq-list, .feedback .rows-head, .fb-list, .signoff, .footer__links { grid-column: 1 / -1; }
   .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stat:nth-child(3) { padding-left: 0; border-left: 0; }
   .stat:nth-child(n + 3) { border-top: 1px solid var(--color-rule); }
-  .tabs { border-radius: var(--radius-card); }
 }
 @media (max-width: 40rem) {
   .nav__pill { gap: var(--space-xs); padding-left: var(--space-md); }
@@ -205,5 +197,5 @@ html:not(.js) .panel + .panel { margin-top: var(--space-3xl); }
   .stat dd { font-size: var(--text-xl); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .btn, .tool, .tabs button, .fb-list a, .link, .faq-list summary::after { transition: none; }
+  .btn, .tool, .fb-list a, .link, .faq-list summary::after { transition: none; }
 }
